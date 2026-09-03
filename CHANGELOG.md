@@ -7,9 +7,9 @@
 
 ## 版本管理约定
 
-- 每次生成新版主页时，**不覆盖**已有版本，而是以递增版本号生成独立文件。
-- 文件命名规则：`outputs/homepage/v1.0.html`、`outputs/homepage/v1.1.html`、`outputs/homepage/v2.0.html` ……（历史版本按此归档保留）。
-- `index.html` 始终指向**最新版本**，方便直接预览。
+- 每次更新主页时，在 `outputs/homepage/` 中**不保留旧版本文件**，直接覆盖更新 `index.html`。
+- 历史版本通过 Git 提交（commit）保留，不再生成 `v1.0.html`、`v1.1.html`、`v2.0.html` 之类的归档文件。
+- `index.html` 即最新版本，方便直接预览。
 - 每个版本在本文件追加一条记录，标明改动内容。
 
 ---
