@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>周亦乐 · 个人主页</title>
+<style>
+  :root {
+    --bg: #0b0f17;
+    --bg-soft: #101624;
+    --card: #151b2c;
+    --card-hover: #1a2234;
+    --line: #242d42;
+    --text: #e7ecf5;
+    --text-dim: #9aa5bb;
+    --text-faint: #6b7690;
+    --accent: #4f8cff;
+    --accent-soft: rgba(79, 140, 255, 0.14);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+      "Microsoft YaHei", "Noto Sans SC", sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 20px 64px;
+  }
+
+  /* ---------- 顶部英雄区 ---------- */
+  .hero {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 8px 0 28px;
+  }
+
+  .avatar-wrap { position: relative; flex-shrink: 0; }
+
+  .avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2a3450, #1a2234);
+    border: 2px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    font-weight: 600;
+    color: #cfd9ec;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color .2s, transform .2s;
+    user-select: none;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .avatar:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+  .avatar-hint {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--accent);
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: .9;
+  }
+
+  .hero h1 { font-size: 28px; font-weight: 700; letter-spacing: .5px; }
+  .hero .tagline {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-top: 4px;
+  }
+  .hero .badge {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(79, 140, 255, .3);
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  /* ---------- 通用卡片 ---------- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 22px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: "";
+    width: 4px;
+    height: 14px;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .info-item { padding: 16px; }
+  .info-item .label {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-bottom: 6px;
+  }
+  .info-item .value {
+    font-size: 15px;
+    color: var(--text);
+  }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .tag {
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    color: var(--text-dim);
+  }
+
+  /* ---------- 数字分身聊天区 ---------- */
+  .chat {
+    display: flex;
+    flex-direction: column;
+    height: 520px;
+  }
+  .chat-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 14px;
+  }
+  .chat-head .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #39d98a;
+    box-shadow: 0 0 0 3px rgba(57, 217, 138, .18);
+  }
+  .chat-head .name { font-size: 15px; font-weight: 600; }
+  .chat-head .sub { font-size: 12px; color: var(--text-faint); }
+
+  .chat-body {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 4px 4px 12px;
+  }
+  .chat-body::-webkit-scrollbar { width: 6px; }
+  .chat-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+  .msg { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 14px; white-space: pre-wrap; }
+  .msg.bot { align-self: flex-start; background: var(--bg-soft); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+  .msg.user { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+
+  .quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 0;
+  }
+  .quick button {
+    font-size: 13px;
+    color: var(--text-dim);
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .quick button:hover { color: var(--accent); border-color: var(--accent); }
+
+  .chat-input {
+    display: flex;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .chat-input input {
+    flex: 1;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    padding: 12px 14px;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+  }
+  .chat-input input:focus { border-color: var(--accent); }
+  .chat-input button {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0 20px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity .15s;
+  }
+  .chat-input button:hover { opacity: .85; }
+
+  footer {
+    margin-top: 28px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 24px; }
+    .avatar { width: 72px; height: 72px; font-size: 28px; }
+    .chat { height: 480px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- 顶部 -->
+    <section class="hero">
+      <div class="avatar-wrap">
+        <div class="avatar" id="avatar" title="点击更换头像">
+          <span id="avatarText">周</span>
+          <img id="avatarImg" alt="" style="display:none" />
+        </div>
+        <span class="avatar-hint">点击换头像</span>
+      </div>
+      <div>
+        <h1>周亦乐</h1>
+        <p class="tagline">我是一个正在用学习感知智能信息时代的学生</p>
+        <span class="badge">大学生</span>
+      </div>
+    </section>
+
+    <!-- 个人信息展示区 -->
+    <div class="grid">
+      <div class="card info-item">
+        <div class="label">我现在主要在做</div>
+        <div class="value">在大学里完成课业和拓展兴趣</div>
+      </div>
+      <div class="card info-item">
+        <div class="label">我的兴趣</div>
+        <div class="tags">
+          <span class="tag">游戏</span>
+          <span class="tag">音乐</span>
+          <span class="tag">诗词</span>
+        </div>
+      </div>
+      <div class="card info-item">
+        <div class="label">一个比较有记忆点的特点</div>
+        <div class="value">喜欢简明扼要、富有逻辑的对话</div>
+      </div>
+      <div class="card info-item">
+        <div class="label">最近在做的事</div>
+        <div class="value">学习正确利用 AI</div>
+      </div>
+    </div>
+
+    <!-- 数字分身聊天区 -->
+    <div class="card chat">
+      <div class="chat-head">
+        <span class="dot"></span>
+        <div>
+          <div class="name">数字分身 · 小周</div>
+          <div class="sub">关于我，你可以随便问</div>
+        </div>
+      </div>
+      <div class="chat-body" id="chatBody">
+        <div class="msg bot">你好，我是周亦乐的数字分身。你可以问我最近在做什么、我的目标，或者我的生活方式。</div>
+      </div>
+      <div class="quick">
+        <button data-q="你最近在干什么？">你最近在干什么？</button>
+        <button data-q="你的目标是什么？">你的目标是什么？</button>
+        <button data-q="你的生活方式是什么样的？">你的生活方式是什么样的？</button>
+      </div>
+      <div class="chat-input">
+        <input id="chatInput" type="text" placeholder="输入你的问题…" />
+        <button id="sendBtn">发送</button>
+      </div>
+    </div>
+
+    <footer>周亦乐 · 个人主页原型 v1</footer>
+  </div>
+
+  <input type="file" id="fileInput" accept="image/*" style="display:none" />
+
+  <script>
+    // ---------- 头像自定义 ----------
+    const avatar = document.getElementById('avatar');
+    const avatarText = document.getElementById('avatarText');
+    const avatarImg = document.getElementById('avatarImg');
+    const fileInput = document.getElementById('fileInput');
+
+    avatar.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        avatarImg.src = reader.result;
+        avatarImg.style.display = 'block';
+        avatarText.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ---------- 数字分身问答逻辑 ----------
+    const chatBody = document.getElementById('chatBody');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    const rules = [
+      { keys: ['最近', '干什么', '在忙', '做什么', '在学'], reply: '我最近主要在学习正确利用 AI，把它当成一个工具来帮助自己学习和思考。' },
+      { keys: ['目标', '打算', '规划', '理想'], reply: '我的目标是把学习这件事做得更有章法：一边完成大学课业，一边在时间管理和计算机学习上持续进步。' },
+      { keys: ['生活方式', '生活', '作息', '习惯', '日常'], reply: '我的生活方式比较克制和清晰——讲究信息层次，喜欢简明扼要、富有逻辑的对话，也保留游戏、音乐和诗词作为兴趣。' },
+      { keys: ['兴趣', '爱好', '喜欢', '玩'], reply: '我的兴趣是游戏、音乐和诗词。它们让我在学习之外保持好奇和放松。' },
+      { keys: ['时间管理', '时间'], reply: '时间管理是我目前比较关心的方向之一，我希望把有限的精力用在真正重要的事情上。' },
+      { keys: ['计算机', '编程', '代码'], reply: '计算机学习是我正在拓展的方向，我会循序渐进地去理解和实践。' },
+      { keys: ['ai', '人工智能', '智能'], reply: '我正在学习如何正确利用 AI——不盲目依赖，而是把它当作提升自己效率和认知的工具。' },
+      { keys: ['你是谁', '介绍', '名字', '叫什么'], reply: '我是周亦乐的数字分身。他是一名大学生，正在用学习去感知这个智能信息时代。' },
+      { keys: ['你好', 'hi', 'hello', '嗨'], reply: '你好呀，很高兴认识你。关于我有什么想了解的，尽管问。' },
+    ];
+
+    function reply(text) {
+      const t = text.toLowerCase();
+      for (const r of rules) {
+        if (r.keys.some(k => t.includes(k))) return r.reply;
+      }
+      return '这个问题我还在慢慢完善。你可以问问我最近在干什么、我的目标是什么，或者我的生活方式是什么样的。';
+    }
+
+    function addMsg(text, who) {
+      const div = document.createElement('div');
+      div.className = 'msg ' + who;
+      div.textContent = text;
+      chatBody.appendChild(div);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function send(text) {
+      const q = (text || chatInput.value).trim();
+      if (!q) return;
+      addMsg(q, 'user');
+      chatInput.value = '';
+      setTimeout(() => addMsg(reply(q), 'bot'), 400);
+    }
+
+    sendBtn.addEventListener('click', () => send());
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') send();
+    });
+    document.querySelectorAll('.quick button').forEach(btn => {
+      btn.addEventListener('click', () => send(btn.dataset.q));
+    });
+  </script>
+</body>
+</html>
