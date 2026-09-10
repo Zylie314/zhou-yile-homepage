@@ -73,13 +73,18 @@ def load_api_key():
 API_KEY = load_api_key()
 
 
-def call_deepseek(messages):
-    """调用 DeepSeek chat completions，返回助手回复文本。"""
+def call_deepseek_stream(messages):
+    """以流式方式调用 DeepSeek，逐段 yield 增量文本。
+
+    使用 stream=True，响应为 SSE 格式（每行 data: {...}），
+    增量内容位于 choices[0].delta.content。
+    """
     payload = {
         "model": DEEPSEEK_MODEL,
         "messages": messages,
         "temperature": 0.8,
         "max_tokens": 800,
+        "stream": True,
     }
     data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(
@@ -92,14 +97,31 @@ def call_deepseek(messages):
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
-            body = json.loads(resp.read().decode("utf-8"))
-            return body["choices"][0]["message"]["content"].strip()
+        resp = urllib.request.urlopen(req, timeout=120)
     except urllib.error.HTTPError as e:
         detail = e.read().decode("utf-8", errors="replace")
         raise RuntimeError("DeepSeek HTTP %s: %s" % (e.code, detail[:500]))
     except urllib.error.URLError as e:
         raise RuntimeError("无法连接 DeepSeek：%s" % e.reason)
+
+    with resp:
+        for raw_line in resp:
+            line = raw_line.decode("utf-8", errors="replace").strip()
+            if not line.startswith("data:"):
+                continue
+            data_str = line[5:].strip()
+            if data_str == "[DONE]":
+                break
+            try:
+                obj = json.loads(data_str)
+            except json.JSONDecodeError:
+                continue
+            choices = obj.get("choices") or []
+            if not choices:
+                continue
+            piece = (choices[0].get("delta") or {}).get("content")
+            if piece:
+                yield piece
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -164,14 +186,34 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(history, list):
                 raise ValueError("messages 必须是数组")
             messages = [{"role": "system", "content": SYSTEM_PROMPT}] + history
-            reply = call_deepseek(messages)
-            self._send_json(200, {"reply": reply})
         except ValueError as e:
             self._send_json(400, {"error": "参数错误：%s" % e})
+            return
+
+        # 流式响应头（在开始流式前必须先拿到首个增量，否则出错时无法优雅返回 JSON）
+        gen = call_deepseek_stream(messages)
+        try:
+            first = next(gen)
+        except StopIteration:
+            self._send_json(200, {"reply": ""})
+            return
         except RuntimeError as e:
             self._send_json(502, {"error": str(e)})
-        except Exception as e:  # 兜底
-            self._send_json(500, {"error": "服务器错误：%s" % e})
+            return
+
+        self.send_response(200)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Connection", "close")
+        self.end_headers()
+        try:
+            self.wfile.write(first.encode("utf-8"))
+            self.wfile.flush()
+            for piece in gen:
+                self.wfile.write(piece.encode("utf-8"))
+                self.wfile.flush()
+        except (BrokenPipeError, ConnectionResetError):
+            pass
 
     # ---------- 路由 ----------
     def do_GET(self):

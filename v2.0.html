@@ -354,21 +354,6 @@
       return div;
     }
 
-    function addLoading() {
-      const div = document.createElement('div');
-      div.className = 'msg bot';
-      div.textContent = '正在思考…';
-      div.id = 'loadingMsg';
-      chatBody.appendChild(div);
-      chatBody.scrollTop = chatBody.scrollHeight;
-      return div;
-    }
-
-    function removeLoading() {
-      const el = document.getElementById('loadingMsg');
-      if (el) el.remove();
-    }
-
     async function send(text) {
       const q = (text || chatInput.value).trim();
       if (!q) return;
@@ -377,25 +362,51 @@
       addMsg(q, 'user');
       chatInput.value = '';
       history.push({ role: 'user', content: q });
-      addLoading();
 
+      // 先放一个空的分身气泡，等待流式内容填充
+      const botDiv = addMsg('', 'bot');
+      botDiv.textContent = '正在思考…';
       sendBtn.disabled = true;
+
       try {
         const res = await fetch('/api/chat', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ messages: history }),
         });
-        const data = await res.json();
+
         if (!res.ok) {
-          throw new Error(data.error || ('请求失败（' + res.status + '）'));
+          let msg = '请求失败（' + res.status + '）';
+          try { const d = await res.json(); if (d.error) msg = d.error; } catch (_) {}
+          throw new Error(msg);
         }
-        removeLoading();
-        addMsg(data.reply, 'bot');
-        history.push({ role: 'assistant', content: data.reply });
+
+        // 流式读取：逐块解码，逐字追加到气泡
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let full = '';
+        let started = false;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          full += chunk;
+          if (!started && full.trim()) {
+            botDiv.textContent = '';
+            started = true;
+          }
+          if (started) {
+            botDiv.textContent = full;
+            chatBody.scrollTop = chatBody.scrollHeight;
+          }
+        }
+
+        const finalText = full.trim();
+        botDiv.textContent = finalText || '（对方没有回复）';
+        history.push({ role: 'assistant', content: finalText });
       } catch (err) {
-        removeLoading();
-        addMsg('抱歉，我现在联系不上后端服务。请确认已运行 server.py（http://127.0.0.1:8000），然后再试。', 'bot');
+        botDiv.textContent = '抱歉，我现在联系不上后端服务。请确认已运行 server.py（http://127.0.0.1:8000），然后再试。';
         console.error(err);
         history.pop(); // 失败时移除这条用户消息，避免污染上下文
       } finally {
