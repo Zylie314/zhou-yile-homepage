@@ -6,422 +6,797 @@
 <title>周亦乐 · 个人主页</title>
 <style>
   :root {
-    --bg: #0b0f17;
-    --bg-soft: #101624;
-    --card: #151b2c;
-    --card-hover: #1a2234;
-    --line: #242d42;
-    --text: #e7ecf5;
-    --text-dim: #9aa5bb;
-    --text-faint: #6b7690;
-    --accent: #4f8cff;
-    --accent-soft: rgba(79, 140, 255, 0.14);
+    --bg: #0e1014;
+    --card: #171a20;
+    --card-2: #1c2129;
+    --bg-soft: #111419;
+    --ink: #e6e9ef;
+    --ink-2: #a2a9b6;
+    --ink-3: #697180;
+    --line: #242a33;
+    --accent: #3d7bff;
+    --accent-soft: rgba(61, 123, 255, .14);
     --radius: 16px;
-    --radius-sm: 10px;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
-      "Microsoft YaHei", "Noto Sans SC", sans-serif;
+                 "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
     line-height: 1.6;
-    min-height: 100vh;
     -webkit-font-smoothing: antialiased;
   }
 
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #2c323d; border-radius: 999px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
   .wrap {
-    max-width: 1080px;
+    max-width: 880px;
     margin: 0 auto;
-    padding: 40px 20px 64px;
+    padding: 40px 20px 72px;
   }
 
-  /* ---------- 顶部英雄区 ---------- */
+  /* 顶部 */
   .hero {
     display: flex;
     align-items: center;
     gap: 20px;
-    flex-wrap: wrap;
-    padding: 8px 0 28px;
-  }
-
-  .avatar-wrap { position: relative; flex-shrink: 0; }
-
-  .avatar {
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #2a3450, #1a2234);
-    border: 2px solid var(--line);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 34px;
-    font-weight: 600;
-    color: #cfd9ec;
-    overflow: hidden;
-    cursor: pointer;
-    transition: border-color .2s, transform .2s;
-    user-select: none;
-  }
-  .avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-  .avatar:hover { border-color: var(--accent); transform: translateY(-2px); }
-
-  .hero h1 { font-size: 28px; font-weight: 700; letter-spacing: .5px; }
-  .hero .tagline {
-    color: var(--text-dim);
-    font-size: 15px;
-    margin-top: 4px;
-  }
-  .hero .badge {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 12px;
-    color: var(--accent);
-    background: var(--accent-soft);
-    border: 1px solid rgba(79, 140, 255, .3);
-    padding: 3px 10px;
-    border-radius: 999px;
-  }
-
-  /* ---------- 通用卡片 ---------- */
-  .card {
+    padding: 28px;
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: var(--radius);
-    padding: 22px;
+    box-shadow: var(--shadow);
+  }
+
+  .avatar {
+    width: 72px;
+    height: 72px;
+    flex: 0 0 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3d7bff 0%, #6f9bff 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    user-select: none;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: opacity .15s ease;
+  }
+  .avatar:hover { opacity: .88; }
+  .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .avatar .hint {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 2px 0;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    font-size: 10px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity .15s ease;
+  }
+  .avatar:hover .hint { opacity: 1; }
+
+  .hero-text h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: .5px;
+  }
+
+  .hero-text .tagline {
+    margin-top: 6px;
+    color: var(--ink-2);
+    font-size: 15px;
+  }
+
+  /* 分区标题 */
+  .section {
+    margin-top: 28px;
   }
 
   .section-title {
     font-size: 13px;
-    letter-spacing: 2px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--ink-3);
     text-transform: uppercase;
-    color: var(--text-faint);
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .section-title::before {
-    content: "";
-    width: 4px;
-    height: 14px;
-    background: var(--accent);
-    border-radius: 2px;
+    margin-bottom: 12px;
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .info-item { padding: 16px; }
-  .info-item .label {
-    font-size: 12px;
-    color: var(--text-faint);
-    margin-bottom: 6px;
-  }
-  .info-item .value {
-    font-size: 15px;
-    color: var(--text);
-  }
-  .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-  .tag {
-    font-size: 12px;
-    padding: 3px 10px;
-    border-radius: 999px;
-    background: var(--bg-soft);
+  /* 个人信息 */
+  .info-card {
+    background: var(--card);
     border: 1px solid var(--line);
-    color: var(--text-dim);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 8px 4px;
   }
 
-  /* ---------- 数字分身聊天区 ---------- */
-  .chat {
+  .info-row {
+    display: flex;
+    padding: 14px 22px;
+    gap: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .info-row:last-child { border-bottom: none; }
+
+  .info-label {
+    flex: 0 0 108px;
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+
+  .info-value {
+    color: var(--ink);
+    font-size: 14px;
+  }
+
+  .tag {
+    display: inline-block;
+    margin: 3px 6px 3px 0;
+    padding: 3px 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 999px;
+    font-size: 13px;
+  }
+
+  /* 聊天区 */
+  .chat-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
-    height: 520px;
+    overflow: hidden;
   }
-  .chat-head {
+
+  .chat-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding-bottom: 14px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--line);
-    margin-bottom: 14px;
   }
-  .chat-head .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #39d98a;
-    box-shadow: 0 0 0 3px rgba(57, 217, 138, .18);
-  }
-  .chat-head .name { font-size: 15px; font-weight: 600; }
-  .chat-head .sub { font-size: 12px; color: var(--text-faint); }
 
-  .chat-body {
-    flex: 1;
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34,197,94,.16);
+  }
+
+  .chat-header .name { font-size: 15px; font-weight: 600; }
+  .chat-header .desc { font-size: 13px; color: var(--ink-3); }
+  .chat-header .spacer { flex: 1; }
+
+  .btn-ghost {
+    border: 1px solid var(--line);
+    background: var(--card-2);
+    color: var(--ink-2);
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  .badge.online { background: #14301e; color: #4ade80; }
+  .badge.pending { background: #2a2614; color: #eab308; }
+  .badge.offline { background: #23262e; color: var(--ink-3); }
+
+  /* 设置面板 */
+  .settings {
+    display: none;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-soft);
+  }
+  .settings.open { display: block; }
+
+  .settings .field { margin-bottom: 14px; }
+  .settings .field:last-child { margin-bottom: 0; }
+  .settings label {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+  }
+  .settings input {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+    background: var(--card-2);
+    color: var(--ink);
+    transition: border-color .15s ease;
+  }
+  .settings input::placeholder { color: var(--ink-3); }
+  .settings input:focus { border-color: var(--accent); }
+
+  .settings .row { display: flex; gap: 10px; align-items: center; }
+  .settings .row input { flex: 1; }
+
+  .settings .note { font-size: 12px; color: var(--ink-3); margin-top: 10px; line-height: 1.5; }
+
+  .btn-primary {
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity .15s ease;
+  }
+  .btn-primary:hover { opacity: .88; }
+
+  .chat-messages {
+    height: 360px;
     overflow-y: auto;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 4px 4px 12px;
+    gap: 14px;
+    background: var(--bg-soft);
   }
-  .chat-body::-webkit-scrollbar { width: 6px; }
-  .chat-body::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
 
-  .msg { max-width: 78%; padding: 10px 14px; border-radius: 14px; font-size: 14px; white-space: pre-wrap; }
-  .msg.bot { align-self: flex-start; background: var(--bg-soft); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
-  .msg.user { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+  .msg {
+    max-width: 78%;
+    padding: 11px 15px;
+    border-radius: 14px;
+    font-size: 14.5px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 
+  .msg.bot {
+    background: var(--card-2);
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+  }
+
+  .msg.user {
+    background: var(--accent);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+    align-self: flex-end;
+  }
+
+  .msg.error { color: #f2a4ab; background: #2a1b1e; border-color: #5c2a30; }
+  .msg.typing { color: var(--ink-3); }
+
+  /* 快捷提问 */
   .quick {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    padding: 12px 0;
+    padding: 12px 20px 0;
   }
-  .quick button {
-    font-size: 13px;
-    color: var(--text-dim);
-    background: var(--bg-soft);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all .15s;
-    font-family: inherit;
-  }
-  .quick button:hover { color: var(--accent); border-color: var(--accent); }
 
+  .chip {
+    border: 1px solid var(--line);
+    background: var(--card-2);
+    color: var(--ink-2);
+    font-size: 13px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  /* 输入区 */
   .chat-input {
     display: flex;
     gap: 10px;
-    padding-top: 12px;
+    padding: 16px 20px 20px;
     border-top: 1px solid var(--line);
   }
+
   .chat-input input {
     flex: 1;
-    background: var(--bg-soft);
     border: 1px solid var(--line);
-    border-radius: var(--radius-sm);
-    color: var(--text);
-    padding: 12px 14px;
-    font-size: 14px;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 14.5px;
     outline: none;
     font-family: inherit;
+    background: var(--card-2);
+    color: var(--ink);
+    transition: border-color .15s ease;
   }
+  .chat-input input::placeholder { color: var(--ink-3); }
   .chat-input input:focus { border-color: var(--accent); }
+
   .chat-input button {
+    border: none;
     background: var(--accent);
     color: #fff;
-    border: none;
-    border-radius: var(--radius-sm);
-    padding: 0 20px;
-    font-size: 14px;
+    border-radius: 12px;
+    padding: 0 22px;
+    font-size: 14.5px;
+    font-weight: 500;
     cursor: pointer;
-    font-family: inherit;
-    transition: opacity .15s;
+    transition: opacity .15s ease;
   }
-  .chat-input button:hover { opacity: .85; }
+  .chat-input button:hover { opacity: .88; }
+  .chat-input button:disabled { opacity: .5; cursor: default; }
 
-  footer {
-    margin-top: 28px;
+  .footnote {
+    margin-top: 24px;
     text-align: center;
-    font-size: 12px;
-    color: var(--text-faint);
+    color: var(--ink-3);
+    font-size: 12.5px;
   }
 
-  @media (max-width: 640px) {
-    .grid { grid-template-columns: 1fr; }
-    .hero h1 { font-size: 24px; }
-    .avatar { width: 72px; height: 72px; font-size: 28px; }
-    .chat { height: 480px; }
+  @media (max-width: 560px) {
+    .hero { flex-direction: column; text-align: center; gap: 14px; }
+    .info-row { flex-direction: column; gap: 4px; padding: 13px 18px; }
+    .info-label { flex: none; }
+    .msg { max-width: 88%; }
+    .chat-messages { height: 320px; }
   }
 </style>
 </head>
 <body>
   <div class="wrap">
-    <!-- 顶部 -->
-    <section class="hero">
-      <div class="avatar-wrap">
-        <div class="avatar" id="avatar" title="点击更换头像">
-          <span id="avatarText">周</span>
-          <img id="avatarImg" alt="" style="display:none" />
-        </div>
+
+    <!-- 头像 + 名字 + 一句话介绍 -->
+    <header class="hero">
+      <div class="avatar" id="avatar" title="点击上传头像">
+        <span id="avatarText">周</span>
+        <span class="hint">点击换头像</span>
       </div>
-      <div>
+      <input type="file" id="avatarInput" accept="image/*" style="display:none" />
+      <div class="hero-text">
         <h1>周亦乐</h1>
         <p class="tagline">我是一个正在用学习感知智能信息时代的学生</p>
-        <span class="badge">大学生</span>
+      </div>
+    </header>
+
+    <!-- 个人信息 -->
+    <section class="section">
+      <div class="section-title">关于我</div>
+      <div class="info-card">
+        <div class="info-row">
+          <div class="info-label">身份</div>
+          <div class="info-value">大学生</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">最近在做</div>
+          <div class="info-value">关注 AI 应用 · 内容表达 · 知识整理</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">擅长 / 关心</div>
+          <div class="info-value">
+            <span class="tag">AI 应用</span>
+            <span class="tag">内容表达</span>
+            <span class="tag">知识整理</span>
+          </div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">兴趣</div>
+          <div class="info-value">
+            <span class="tag">游戏</span>
+            <span class="tag">音乐</span>
+            <span class="tag">诗词</span>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- 个人信息展示区 -->
-    <div class="grid">
-      <div class="card info-item">
-        <div class="label">我现在主要在做</div>
-        <div class="value">在大学里完成课业和拓展兴趣</div>
-      </div>
-      <div class="card info-item">
-        <div class="label">我的兴趣</div>
-        <div class="tags">
-          <span class="tag">游戏</span>
-          <span class="tag">音乐</span>
-          <span class="tag">诗词</span>
-        </div>
-      </div>
-      <div class="card info-item">
-        <div class="label">一个比较有记忆点的特点</div>
-        <div class="value">喜欢简明扼要、富有逻辑的对话</div>
-      </div>
-      <div class="card info-item">
-        <div class="label">最近在做的事</div>
-        <div class="value">学习正确利用 AI</div>
-      </div>
-    </div>
-
     <!-- 数字分身聊天区 -->
-    <div class="card chat">
-      <div class="chat-head">
-        <span class="dot"></span>
-        <div>
-          <div class="name">数字分身 · 小周</div>
-          <div class="sub">关于我，你可以随便问</div>
+    <section class="section">
+      <div class="section-title">数字分身 · 问我点啥</div>
+      <div class="chat-card">
+        <div class="chat-header">
+          <span class="dot"></span>
+          <span class="name">周亦乐的数字分身</span>
+          <span id="statusBadge" class="badge offline">本地演示</span>
+          <span class="spacer"></span>
+          <button class="btn-ghost" id="settingsBtn">设置</button>
+        </div>
+
+        <div class="settings" id="settings">
+          <div class="field">
+            <label>API Key（用于接入大模型，留空则用本地演示回答）</label>
+            <input id="apiKey" type="password" placeholder="sk-…" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>接口地址 Base URL（OpenAI 兼容格式，如 https://api.deepseek.com/v1）</label>
+            <input id="baseUrl" type="text" placeholder="https://api.deepseek.com/v1" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label>模型名</label>
+            <input id="model" type="text" placeholder="deepseek-chat" autocomplete="off" />
+          </div>
+          <div class="row">
+            <button class="btn-primary" id="saveSettings">保存</button>
+            <button class="btn-ghost" id="testSettings">测试连接</button>
+            <button class="btn-ghost" id="clearSettings">清除</button>
+          </div>
+          <p class="note" id="testResult"></p>
+          <p class="note">配置只保存在你本机浏览器里，不会上传到任何服务器；请求只会发往你填写的接口地址。</p>
+          <p class="note">还没有 Key？到 <a href="https://platform.deepseek.com" target="_blank" rel="noopener" style="color:var(--accent)">platform.deepseek.com</a> 注册并创建 API Key（新用户通常有免费额度）。</p>
+        </div>
+
+        <div class="chat-messages" id="messages">
+          <div class="msg bot">你好，我是周亦乐的数字分身。最近在琢磨 AI 应用、内容表达和知识整理，问点啥？我尽量说得像人话。</div>
+        </div>
+
+        <div class="quick" id="quick">
+          <span class="chip">你最近在关注什么？</span>
+          <span class="chip">你怎么把复杂问题讲清楚？</span>
+          <span class="chip">你的目标是什么？</span>
+        </div>
+
+        <div class="chat-input">
+          <input id="input" type="text" placeholder="输入问题，回车发送…" autocomplete="off" />
+          <button id="send">发送</button>
         </div>
       </div>
-      <div class="chat-body" id="chatBody">
-        <div class="msg bot">你好，我是周亦乐的数字分身。你可以问我最近在做什么、我的目标，或者我的生活方式。</div>
-      </div>
-      <div class="quick">
-        <button data-q="你最近在干什么？">你最近在干什么？</button>
-        <button data-q="你的目标是什么？">你的目标是什么？</button>
-        <button data-q="你的生活方式是什么样的？">你的生活方式是什么样的？</button>
-      </div>
-      <div class="chat-input">
-        <input id="chatInput" type="text" placeholder="输入你的问题…" />
-        <button id="sendBtn">发送</button>
-      </div>
-    </div>
+    </section>
 
-    <footer>周亦乐 · 个人主页原型 v1</footer>
+    <p class="footnote">点击头像可换图 · 在「设置」中填入 DeepSeek Key 即可让数字分身接入真实模型</p>
   </div>
 
-  <input type="file" id="fileInput" accept="image/*" style="display:none" />
+<script>
+(function () {
+  var messagesEl = document.getElementById('messages');
+  var inputEl = document.getElementById('input');
+  var sendEl = document.getElementById('send');
+  var quickEl = document.getElementById('quick');
+  var statusBadge = document.getElementById('statusBadge');
+  var typing = false;
 
-  <script>
-    // ---------- 头像自定义 ----------
-    const avatar = document.getElementById('avatar');
-    const avatarText = document.getElementById('avatarText');
-    const avatarImg = document.getElementById('avatarImg');
-    const fileInput = document.getElementById('fileInput');
+  // ===== 头像 =====
+  var avatar = document.getElementById('avatar');
+  var avatarText = document.getElementById('avatarText');
+  var avatarInput = document.getElementById('avatarInput');
 
-    avatar.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        avatarImg.src = reader.result;
-        avatarImg.style.display = 'block';
-        avatarText.style.display = 'none';
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // ---------- 数字分身问答逻辑（接入 DeepSeek 真实模型） ----------
-    const chatBody = document.getElementById('chatBody');
-    const chatInput = document.getElementById('chatInput');
-    const sendBtn = document.getElementById('sendBtn');
-
-    // 会话历史：保留上下文，让分身记得前面聊过什么
-    let history = [];
-
-    function addMsg(text, who) {
-      const div = document.createElement('div');
-      div.className = 'msg ' + who;
-      div.textContent = text;
-      chatBody.appendChild(div);
-      chatBody.scrollTop = chatBody.scrollHeight;
-      return div;
+  function loadAvatar() {
+    var data = localStorage.getItem('zye_avatar');
+    if (data) {
+      var img = document.createElement('img');
+      img.src = data;
+      img.alt = '头像';
+      avatarText.style.display = 'none';
+      avatar.appendChild(img);
     }
+  }
+  avatar.addEventListener('click', function () { avatarInput.click(); });
+  avatarInput.addEventListener('change', function (e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var data = reader.result;
+      localStorage.setItem('zye_avatar', data);
+      var existing = avatar.querySelector('img');
+      if (existing) existing.remove();
+      var img = document.createElement('img');
+      img.src = data;
+      img.alt = '头像';
+      avatarText.style.display = 'none';
+      avatar.appendChild(img);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = '';
+  });
 
-    async function send(text) {
-      const q = (text || chatInput.value).trim();
-      if (!q) return;
-      if (sendBtn.disabled) return; // 防止连点
+  // ===== 设置 =====
+  var settingsEl = document.getElementById('settings');
+  var settingsBtn = document.getElementById('settingsBtn');
+  var apiKeyEl = document.getElementById('apiKey');
+  var baseUrlEl = document.getElementById('baseUrl');
+  var modelEl = document.getElementById('model');
+  var saveBtn = document.getElementById('saveSettings');
+  var testBtn = document.getElementById('testSettings');
+  var clearBtn = document.getElementById('clearSettings');
+  var testResultEl = document.getElementById('testResult');
 
-      addMsg(q, 'user');
-      chatInput.value = '';
-      history.push({ role: 'user', content: q });
+  var CFG_KEY = 'zye_llm';
+  var cfg = { apiKey: '', baseUrl: 'https://api.deepseek.com/v1', model: 'deepseek-chat' };
+  var verified = false;
 
-      // 先放一个空的分身气泡，等待流式内容填充
-      const botDiv = addMsg('', 'bot');
-      botDiv.textContent = '正在思考…';
-      sendBtn.disabled = true;
-
-      try {
-        const res = await fetch('/api/chat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: history }),
-        });
-
-        if (!res.ok) {
-          let msg = '请求失败（' + res.status + '）';
-          try { const d = await res.json(); if (d.error) msg = d.error; } catch (_) {}
-          throw new Error(msg);
+  function loadCfg() {
+    try {
+      var raw = localStorage.getItem(CFG_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === 'object') {
+          cfg.apiKey = parsed.apiKey || '';
+          cfg.baseUrl = parsed.baseUrl || 'https://api.deepseek.com/v1';
+          cfg.model = parsed.model || 'deepseek-chat';
         }
-
-        // 流式读取：逐块解码，逐字追加到气泡
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder('utf-8');
-        let full = '';
-        let started = false;
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          const chunk = decoder.decode(value, { stream: true });
-          full += chunk;
-          if (!started && full.trim()) {
-            botDiv.textContent = '';
-            started = true;
-          }
-          if (started) {
-            botDiv.textContent = full;
-            chatBody.scrollTop = chatBody.scrollHeight;
-          }
-        }
-
-        const finalText = full.trim();
-        botDiv.textContent = finalText || '（对方没有回复）';
-        history.push({ role: 'assistant', content: finalText });
-      } catch (err) {
-        botDiv.textContent = '抱歉，我现在联系不上后端服务。请确认已运行 server.py（http://127.0.0.1:8000），然后再试。';
-        console.error(err);
-        history.pop(); // 失败时移除这条用户消息，避免污染上下文
-      } finally {
-        sendBtn.disabled = false;
-        chatInput.focus();
       }
-    }
+    } catch (e) {}
+    apiKeyEl.value = cfg.apiKey;
+    baseUrlEl.value = cfg.baseUrl;
+    modelEl.value = cfg.model;
+    updateBadge();
+  }
 
-    sendBtn.addEventListener('click', () => send());
-    chatInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') send();
+  function saveCfg() {
+    cfg.apiKey = apiKeyEl.value.trim();
+    cfg.baseUrl = baseUrlEl.value.trim();
+    cfg.model = modelEl.value.trim();
+    localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+    verified = false;
+    settingsEl.classList.remove('open');
+    updateBadge();
+  }
+
+  function clearCfg() {
+    cfg = { apiKey: '', baseUrl: 'https://api.deepseek.com/v1', model: 'deepseek-chat' };
+    localStorage.removeItem(CFG_KEY);
+    apiKeyEl.value = '';
+    baseUrlEl.value = cfg.baseUrl;
+    modelEl.value = cfg.model;
+    verified = false;
+    updateBadge();
+  }
+
+  function testConnection() {
+    var key = apiKeyEl.value.trim();
+    var base = baseUrlEl.value.trim() || 'https://api.deepseek.com/v1';
+    var model = modelEl.value.trim() || 'deepseek-chat';
+    if (!key) {
+      testResultEl.textContent = '请先填写 API Key 再测试。';
+      return;
+    }
+    cfg.apiKey = key;
+    cfg.baseUrl = base;
+    cfg.model = model;
+    localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+
+    testResultEl.textContent = '正在测试连接…';
+    fetch(base.replace(/\/+$/, '') + '/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify({ model: model, messages: [{ role: 'user', content: 'ping' }], max_tokens: 1, stream: false })
+    }).then(function (res) {
+      if (res.ok) {
+        verified = true;
+        updateBadge();
+        testResultEl.textContent = '✓ 连接成功，模型「' + model + '」可用，现在就能和数字分身对话了。';
+      } else {
+        verified = false;
+        updateBadge();
+        return res.text().then(function (t) { throw new Error(res.status + '：' + t.slice(0, 160)); });
+      }
+    }).catch(function (e) {
+      verified = false;
+      updateBadge();
+      testResultEl.textContent = '✗ 连接失败：' + e.message;
     });
-    document.querySelectorAll('.quick button').forEach(btn => {
-      btn.addEventListener('click', () => send(btn.dataset.q));
+  }
+
+  function updateBadge() {
+    if (!cfg.apiKey) {
+      statusBadge.textContent = '本地演示';
+      statusBadge.className = 'badge offline';
+    } else if (verified) {
+      statusBadge.textContent = '大模型已接入';
+      statusBadge.className = 'badge online';
+    } else {
+      statusBadge.textContent = '已配置·未验证';
+      statusBadge.className = 'badge pending';
+    }
+  }
+
+  settingsBtn.addEventListener('click', function () {
+    settingsEl.classList.toggle('open');
+  });
+  saveBtn.addEventListener('click', saveCfg);
+  testBtn.addEventListener('click', testConnection);
+  clearBtn.addEventListener('click', clearCfg);
+
+  // ===== 数字分身（本地规则 + 可选大模型） =====
+  var SYSTEM_PROMPT = [
+    '你是周亦乐的数字分身，请以周亦乐本人的口吻与访客对话。',
+    '关于周亦乐：他是一名大学生；最近关注的方向是 AI 应用、内容表达和知识整理；兴趣是游戏、音乐、诗词。',
+    '说话风格：幽默、思维跳脱但逻辑在线，像平时聊天一样自然，用「人话」而不是书面腔。',
+    '回答要求：用简体中文，简短直接、条理清晰，能一句说清的不绕弯子；擅长把复杂问题拆成大白话讲明白；不要编造周亦乐没说过的事实，不确定就诚实说明并引导到能聊的方向。'
+  ].join('\n');
+
+  var knowledge = [
+    { keys: ['最近', '干什么', '在做什么', '干嘛', '忙什么', '近况', '关注'], answer: '最近盯着三件事转：AI 应用、内容表达、知识整理。说白了就是——让 AI 干活、把话说清楚、把脑子里的东西收拾利索。' },
+    { keys: ['目标', '打算', '规划', '未来', '理想', '想成为'], answer: '目标不复杂：把复杂的事讲简单，把散乱的东西整理成体系，顺便让 AI 帮我省点力气。' },
+    { keys: ['生活方式', '生活', '习惯', '日常', '作息', '怎么安排'], answer: '白天上课，晚上研究 AI 怎么用、怎么写表达、怎么整理知识，累了就打打游戏听听歌，张弛有度。' },
+    { keys: ['兴趣', '爱好', '喜欢', '玩什么'], answer: '游戏、音乐、诗词，学习之外的三件套。' },
+    { keys: ['擅长', '关心', '方向', '领域', '复杂', '讲清'], answer: '比较拿手的是把复杂问题讲成大白话，也一直在琢磨 AI 应用、内容表达和知识整理。' },
+    { keys: ['名字', '你是谁', '叫什么'], answer: '周亦乐，一名大学生。' },
+    { keys: ['身份', '职业', '学生'], answer: '大学生，正琢磨怎么在智能时代里把自己和工具都用明白。' },
+    { keys: ['ai', '人工智能', '大模型', '应用'], answer: '我最近在关注 AI 应用：不是被它牵着走，而是让它替我干活、帮我把复杂的事拆开讲清。' },
+    { keys: ['表达', '写作', '内容'], answer: '内容表达这块我在练：说人话、讲重点、让人一眼看懂。' },
+    { keys: ['整理', '笔记', '体系'], answer: '知识整理是我的重点：把零散的东西搭成框架，需要的时候一秒能翻出来。' },
+    { keys: ['你好', 'hi', 'hello', '在吗'], answer: '在呢，问吧，我尽量说得像人话。' },
+    { keys: ['谢谢', '感谢', '厉害', '不错'], answer: '客气了，能帮上忙就成。' }
+  ];
+
+  var fallback = '这问题我得再想想。你可以问我：最近在关注什么、目标是什么，或者我是怎么把复杂事讲简单的。';
+
+  // 对话历史（发给大模型时用，最多保留最近 8 条）
+  var history = [];
+
+  function localReply(text) {
+    var q = text.toLowerCase();
+    for (var i = 0; i < knowledge.length; i++) {
+      var hit = knowledge[i].keys.some(function (k) { return q.indexOf(k) !== -1; });
+      if (hit) return knowledge[i].answer;
+    }
+    return fallback;
+  }
+
+  function addMessage(text, who) {
+    var el = document.createElement('div');
+    el.className = 'msg ' + who;
+    el.textContent = text;
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return el;
+  }
+
+  function buildUrl() {
+    return cfg.baseUrl.replace(/\/+$/, '') + '/chat/completions';
+  }
+
+  function buildMsgs(userText) {
+    return [{ role: 'system', content: SYSTEM_PROMPT }]
+      .concat(history.slice(-8))
+      .concat([{ role: 'user', content: userText }]);
+  }
+
+  function callLLM(userText, onDelta, onDone) {
+    // 流式输出：把每一段内容通过 onDelta 吐出来，结束后调用 onDone
+    return fetch(buildUrl(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + cfg.apiKey
+      },
+      body: JSON.stringify({ model: cfg.model, messages: buildMsgs(userText), temperature: 0.7, stream: true })
+    }).then(function (res) {
+      if (!res.ok) {
+        return res.text().then(function (t) {
+          throw new Error('接口返回 ' + res.status + '：' + t.slice(0, 120));
+        });
+      }
+      var reader = res.body.getReader();
+      var decoder = new TextDecoder('utf-8');
+      var buffer = '';
+
+      function pump() {
+        return reader.read().then(function (r) {
+          if (r.done) { onDone(); return; }
+          buffer += decoder.decode(r.value, { stream: true });
+          var lines = buffer.split('\n');
+          buffer = lines.pop();
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].trim();
+            if (line.indexOf('data:') !== 0) continue;
+            var payload = line.slice(5).trim();
+            if (payload === '[DONE]') { onDone(); return; }
+            try {
+              var json = JSON.parse(payload);
+              var delta = json.choices && json.choices[0] && json.choices[0].delta;
+              var content = delta && delta.content;
+              if (content) onDelta(content);
+            } catch (err) {}
+          }
+          return pump();
+        });
+      }
+      return pump();
     });
-  </script>
+  }
+
+  function send(text) {
+    text = (text || '').trim();
+    if (!text || typing) return;
+
+    addMessage(text, 'user');
+    history.push({ role: 'user', content: text });
+    inputEl.value = '';
+
+    sendEl.disabled = true;
+    typing = true;
+
+    if (cfg.apiKey) {
+      // 流式：先放一个空气泡，再逐字填充
+      var msgEl = addMessage('', 'bot');
+      var acc = '';
+      var finished = false;
+
+      function finish(replyText) {
+        if (finished) return;
+        finished = true;
+        msgEl.textContent = replyText;
+        msgEl.classList.remove('typing');
+        history.push({ role: 'assistant', content: replyText });
+        sendEl.disabled = false;
+        typing = false;
+      }
+
+      var timer = setTimeout(function () {
+        if (!acc) msgEl.textContent = '正在输入…';
+        msgEl.classList.add('typing');
+      }, 400);
+
+      callLLM(text,
+        function (delta) {
+          acc += delta;
+          msgEl.textContent = acc;
+          msgEl.classList.remove('typing');
+          clearTimeout(timer);
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+        },
+        function () {
+          clearTimeout(timer);
+          finish(acc ? acc.trim() : localReply(text) + '\n\n（接口未返回内容）');
+        }
+      ).catch(function (e) {
+        clearTimeout(timer);
+        // 大模型失败时回退到本地规则
+        finish(localReply(text) + '\n\n（大模型调用失败：' + e.message + '）');
+      });
+    } else {
+      var t = addMessage('正在输入…', 'bot typing');
+      setTimeout(function () {
+        t.remove();
+        addMessage(localReply(text), 'bot');
+        history.push({ role: 'assistant', content: localReply(text) });
+        sendEl.disabled = false;
+        typing = false;
+      }, 550 + Math.random() * 350);
+    }
+  }
+
+  sendEl.addEventListener('click', function () { send(inputEl.value); });
+  inputEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') send(inputEl.value);
+  });
+
+  quickEl.addEventListener('click', function (e) {
+    if (e.target.classList.contains('chip')) send(e.target.textContent);
+  });
+
+  // ===== 初始化 =====
+  loadAvatar();
+  loadCfg();
+})();
+</script>
 </body>
 </html>
