@@ -1,0 +1,6 @@
+# 敏感信息，绝不提交
+.env
+
+# Python
+__pycache__/
+*.pyc
