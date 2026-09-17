@@ -1,6 +1,9 @@
 # 敏感信息，绝不提交
 .env
 
+# 反馈数据（含访客信息，不公开、不提交）
+feedback.jsonl
+
 # Python
 __pycache__/
 *.pyc

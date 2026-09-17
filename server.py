@@ -15,6 +15,7 @@ API Key 读取优先级：
   环境变量 DEEPSEEK_API_KEY > 同目录 .env 文件中的 DEEPSEEK_API_KEY
 """
 
+import datetime
 import json
 import os
 import sys
@@ -68,6 +69,11 @@ def load_api_key():
                 if k.strip() == "DEEPSEEK_API_KEY":
                     return v.strip().strip('"').strip("'")
     return ""
+
+
+# 反馈数据：追加写入 JSONL，每条含提交时间与页面版本（反馈内容不公开，文件已加入 .gitignore）
+FEEDBACK_VERSION = "v3.0"  # 当前页面版本；归档新版本时同步更新
+FEEDBACK_FILE = os.path.join(BASE_DIR, "feedback.jsonl")
 
 
 API_KEY = load_api_key()
@@ -215,13 +221,57 @@ class Handler(BaseHTTPRequestHandler):
         except (BrokenPipeError, ConnectionResetError):
             pass
 
+    # ---------- 反馈 ----------
+    def _handle_feedback(self):
+        try:
+            length = int(self.headers.get("Content-Length", 0))
+            raw = self.rfile.read(length).decode("utf-8")
+            req = json.loads(raw or "{}")
+        except (ValueError, json.JSONDecodeError):
+            self._send_json(400, {"error": "请求体不是合法 JSON"})
+            return
+
+        name = (req.get("name") or "").strip()
+        relation = (req.get("relation") or "").strip()
+        device = (req.get("device") or "").strip()
+        content = (req.get("content") or "").strip()
+        version = (req.get("version") or FEEDBACK_VERSION).strip()
+
+        if not content:
+            self._send_json(400, {"error": "反馈内容不能为空"})
+            return
+        if len(content) > 2000:
+            self._send_json(400, {"error": "反馈内容过长（最多 2000 字）"})
+            return
+
+        record = {
+            "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "version": version,
+            "name": name[:100],
+            "relation": relation[:100],
+            "device": device[:100],
+            "content": content,
+        }
+
+        try:
+            with open(FEEDBACK_FILE, "a", encoding="utf-8") as f:
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        except OSError as e:
+            self._send_json(500, {"error": "保存反馈失败：%s" % e})
+            return
+
+        self._send_json(200, {"ok": True})
+
     # ---------- 路由 ----------
     def do_GET(self):
         self._serve_static()
 
     def do_POST(self):
-        if self.path.split("?", 1)[0] == "/api/chat":
+        path = self.path.split("?", 1)[0]
+        if path == "/api/chat":
             self._handle_chat()
+        elif path == "/api/feedback":
+            self._handle_feedback()
         else:
             self._send(404, "Not Found")
 
