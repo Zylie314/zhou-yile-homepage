@@ -15,7 +15,21 @@
 
 ---
 
-## v3.0（当前）
+## v3.1（当前）
+
+**改动：反馈数据接入 Supabase 云数据库**
+
+- 反馈从「追加写入本地 `feedback.jsonl`」升级为「写入 Supabase 云数据库」，多设备访问时反馈集中到云端，不再分散在本机文件里。
+- 后端 `server.py` 的 `POST /api/feedback` 改为优先写入 Supabase `feedback` 表（自动记录 `created_at` 提交时间与 `version` 版本）。
+- Supabase 采用最小权限：匿名访客仅能「插入」反馈，无法读取/修改/删除；数据查看走 Supabase dashboard。
+- Supabase 写入失败时自动回退到本地 `feedback.jsonl`，确保不丢反馈。
+- `.env` 新增 `SUPABASE_URL` 与 `SUPABASE_ANON_KEY`（已由 `.gitignore` 忽略，不提交）。
+
+> 已归档为独立文件：`outputs/homepage/v3.1.html`（`index.html` 同步指向本版本）。
+
+---
+
+## v3.0
 
 **改动：新增页面反馈入口**
 

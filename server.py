@@ -71,12 +71,36 @@ def load_api_key():
     return ""
 
 
+def load_supabase_config():
+    """优先读环境变量，其次读 .env 文件，返回 (SUPABASE_URL, SUPABASE_ANON_KEY)。"""
+    url = os.environ.get("SUPABASE_URL", "").strip()
+    anon_key = os.environ.get("SUPABASE_ANON_KEY", "").strip()
+    if url and anon_key:
+        return url, anon_key
+
+    env_path = os.path.join(BASE_DIR, ".env")
+    if os.path.exists(env_path):
+        with open(env_path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, _, v = line.partition("=")
+                k = k.strip()
+                if k == "SUPABASE_URL" and not url:
+                    url = v.strip().strip('"').strip("'")
+                elif k == "SUPABASE_ANON_KEY" and not anon_key:
+                    anon_key = v.strip().strip('"').strip("'")
+    return url, anon_key
+
+
 # 反馈数据：追加写入 JSONL，每条含提交时间与页面版本（反馈内容不公开，文件已加入 .gitignore）
-FEEDBACK_VERSION = "v3.0"  # 当前页面版本；归档新版本时同步更新
+FEEDBACK_VERSION = "v3.1"  # 当前页面版本；归档新版本时同步更新
 FEEDBACK_FILE = os.path.join(BASE_DIR, "feedback.jsonl")
 
 
 API_KEY = load_api_key()
+SUPABASE_URL, SUPABASE_ANON_KEY = load_supabase_config()
 
 
 def call_deepseek_stream(messages):
@@ -128,6 +152,42 @@ def call_deepseek_stream(messages):
             piece = (choices[0].get("delta") or {}).get("content")
             if piece:
                 yield piece
+
+
+def insert_feedback_supabase(record):
+    """写入 Supabase feedback 表，返回 (status_code, error_detail)。
+
+    使用 anon key（最小权限），依赖表的 RLS 策略允许 anon 插入。
+    """
+    url = SUPABASE_URL.rstrip("/") + "/rest/v1/feedback"
+    data = json.dumps(record).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=data,
+        headers={
+            "Content-Type": "application/json",
+            "apikey": SUPABASE_ANON_KEY,
+            "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+            "Prefer": "return=minimal",
+        },
+        method="POST",
+    )
+    try:
+        resp = urllib.request.urlopen(req, timeout=15)
+        return resp.status, None
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode("utf-8", errors="replace")
+        return e.code, detail[:500]
+    except urllib.error.URLError as e:
+        return None, "无法连接 Supabase：%s" % e.reason
+
+
+def save_feedback_local(record):
+    """回退方案：写入本地 feedback.jsonl（含提交时间）。"""
+    local = dict(record)
+    local["time"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(FEEDBACK_FILE, "a", encoding="utf-8") as f:
+        f.write(json.dumps(local, ensure_ascii=False) + "\n")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -245,7 +305,6 @@ class Handler(BaseHTTPRequestHandler):
             return
 
         record = {
-            "time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "version": version,
             "name": name[:100],
             "relation": relation[:100],
@@ -253,14 +312,27 @@ class Handler(BaseHTTPRequestHandler):
             "content": content,
         }
 
+        # 优先写入 Supabase；未配置或失败时回退本地文件，确保不丢反馈
+        if SUPABASE_URL and SUPABASE_ANON_KEY:
+            status, err = insert_feedback_supabase(record)
+            if status == 201:
+                self._send_json(200, {"ok": True, "backend": "supabase"})
+                return
+            try:
+                save_feedback_local(record)
+            except OSError as e:
+                self._send_json(500, {"error": "Supabase 写入失败且本地保存也失败：%s" % e})
+                return
+            self._send_json(200, {"ok": True, "backend": "local",
+                                  "note": "Supabase 写入失败，已保存到本地文件"})
+            return
+
         try:
-            with open(FEEDBACK_FILE, "a", encoding="utf-8") as f:
-                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+            save_feedback_local(record)
         except OSError as e:
             self._send_json(500, {"error": "保存反馈失败：%s" % e})
             return
-
-        self._send_json(200, {"ok": True})
+        self._send_json(200, {"ok": True, "backend": "local"})
 
     # ---------- 路由 ----------
     def do_GET(self):
