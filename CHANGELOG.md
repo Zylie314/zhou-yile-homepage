@@ -15,7 +15,22 @@
 
 ---
 
-## v3.6（当前）
+## v3.7（当前）
+
+**改动：在线版启用真实 AI 对话（直连 DeepSeek）**
+
+- 在线静态版（GitHub Pages）聊天改为前端直连 DeepSeek API（`api.deepseek.com`，支持 CORS），流式输出真实回复，不再降级为内置规则回复。
+- 数字分身人设提示词（`SYSTEM_PROMPT`）内置到前端，与本地版保持一致。
+- 本地版仍走 Python 后端 `/api/chat`，行为不变。
+- 在线版提示文案更新为「已支持 AI 对话」。
+
+> 说明：直连方案会将 DeepSeek Key 写入页面源码（F12 可见），需配合 DeepSeek 账户余额上限控制风险；后续如需更安全，可再迁移到 Cloudflare Worker 代理（需绑定自定义域名）。
+
+> 已归档为独立文件：`outputs/homepage/v3.7.html`（`index.html` 同步指向本版本）。
+
+---
+
+## v3.6
 
 **改动：下载包改为「仅最新版本」运行包**
 

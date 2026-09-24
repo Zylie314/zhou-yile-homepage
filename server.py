@@ -95,7 +95,7 @@ def load_supabase_config():
 
 
 # 反馈数据：追加写入 JSONL，每条含提交时间与页面版本（反馈内容不公开，文件已加入 .gitignore）
-FEEDBACK_VERSION = "v3.6"  # 当前页面版本；归档新版本时同步更新
+FEEDBACK_VERSION = "v3.7"  # 当前页面版本；归档新版本时同步更新
 FEEDBACK_FILE = os.path.join(BASE_DIR, "feedback.jsonl")
 
 
