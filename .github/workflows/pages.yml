@@ -20,6 +20,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      - name: 打包运行包（仅最新版本）
+        run: |
+          python3 - <<'PY'
+          import zipfile, os
+          files = ["index.html", "server.py", "启动主页.bat", "README.md", ".env.example"]
+          with zipfile.ZipFile("homepage-latest.zip", "w", zipfile.ZIP_DEFLATED) as z:
+              for f in files:
+                  z.write(f, os.path.basename(f))
+          print("packed:", files)
+          PY
       - uses: actions/upload-pages-artifact@v3
         with:
           path: .

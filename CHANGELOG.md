@@ -15,7 +15,19 @@
 
 ---
 
-## v3.5（当前）
+## v3.6（当前）
+
+**改动：下载包改为「仅最新版本」运行包**
+
+- 下载入口改为下载 `homepage-latest.zip`，只含运行必需文件（`index.html`、`server.py`、`启动主页.bat`、`README.md`、`.env.example`），不再包含历史版本归档。
+- `pages.yml` 新增打包步骤：每次 push 自动生成最新运行包。
+- 新增 `.env.example` 配置模板。
+
+> 已归档为独立文件：`outputs/homepage/v3.6.html`（`index.html` 同步指向本版本）。
+
+---
+
+## v3.5
 
 **改动：「关于我」新增电子邮箱**
 
