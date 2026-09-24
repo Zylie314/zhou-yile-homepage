@@ -95,7 +95,7 @@ def load_supabase_config():
 
 
 # 反馈数据：追加写入 JSONL，每条含提交时间与页面版本（反馈内容不公开，文件已加入 .gitignore）
-FEEDBACK_VERSION = "v3.1"  # 当前页面版本；归档新版本时同步更新
+FEEDBACK_VERSION = "v3.2"  # 当前页面版本；归档新版本时同步更新
 FEEDBACK_FILE = os.path.join(BASE_DIR, "feedback.jsonl")
 
 
@@ -350,10 +350,11 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8000
-    server = HTTPServer(("127.0.0.1", port), Handler)
+    server = HTTPServer(("0.0.0.0", port), Handler)
     if not API_KEY:
         print("警告：未找到 DEEPSEEK_API_KEY（请配置 .env 或环境变量），聊天接口将不可用。")
     print("个人主页服务已启动： http://127.0.0.1:%d" % port)
+    print("局域网访问： http://<本机IP>:%d" % port)
     print("按 Ctrl+C 停止服务。")
     try:
         server.serve_forever()
