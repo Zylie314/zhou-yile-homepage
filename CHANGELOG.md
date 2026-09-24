@@ -15,7 +15,19 @@
 
 ---
 
-## v3.2（当前）
+## v3.3（当前）
+
+**改动：适配 GitHub Pages 静态部署**
+
+- 反馈表单改为前端直连 Supabase `feedback` 表（`POST /rest/v1/feedback`），在线静态版与本地版行为一致，反馈统一写入云端。
+- 在线静态版（GitHub Pages）检测到无 Python 后端时，AI 聊天自动降级为内置规则回复，并在聊天区与页脚给出「AI 对话需本地运行」的提示。
+- 前端仅携带 Supabase 公开 anon key（最小权限，仅可插入），DeepSeek Key 仍只保存在本地 `.env`，不上传。
+
+> 已归档为独立文件：`outputs/homepage/v3.3.html`（`index.html` 同步指向本版本）。
+
+---
+
+## v3.2
 
 **改动：移除头像**
 
