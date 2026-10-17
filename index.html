@@ -6,18 +6,18 @@
 <title>周亦乐 · 个人主页</title>
 <style>
   :root {
-    --bg: #0e1014;
-    --card: #171a20;
-    --card-2: #1c2129;
-    --bg-soft: #111419;
-    --ink: #e6e9ef;
-    --ink-2: #a2a9b6;
-    --ink-3: #697180;
-    --line: #242a33;
+    --bg: #f3efe4;
+    --card: rgba(255, 253, 247, .88);
+    --card-2: #fbf7ee;
+    --bg-soft: #f6f1e6;
+    --ink: #2b2620;
+    --ink-2: #5a5246;
+    --ink-3: #94887a;
+    --line: #e2d9c7;
     --accent: #3d7bff;
-    --accent-soft: rgba(61, 123, 255, .14);
+    --accent-soft: rgba(61, 123, 255, .12);
     --radius: 16px;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.35);
+    --shadow: 0 1px 2px rgba(0,0,0,.06), 0 10px 30px rgba(0,0,0,.10);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,14 +25,14 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
                  "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-    background: var(--bg);
+    background: var(--bg) url('taiji-bg.jpg') center / cover no-repeat fixed;
     color: var(--ink);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
-  ::-webkit-scrollbar-thumb { background: #2c323d; border-radius: 999px; }
+  ::-webkit-scrollbar-thumb { background: #c9bfa9; border-radius: 999px; }
   ::-webkit-scrollbar-track { background: transparent; }
 
   .wrap {
@@ -251,7 +251,7 @@
     align-self: flex-end;
   }
 
-  .msg.error { color: #f2a4ab; background: #2a1b1e; border-color: #5c2a30; }
+  .msg.error { color: #a33a3a; background: #f7e7e7; border-color: #eccdcd; }
   .msg.typing { color: var(--ink-3); }
 
   /* 快捷提问 */
@@ -393,7 +393,7 @@
   .feedback-field input:focus,
   .feedback-field textarea:focus { border-color: var(--accent); }
 
-  .feedback-error { font-size: 12.5px; color: #f2a4ab; margin-bottom: 10px; }
+  .feedback-error { font-size: 12.5px; color: #c0392b; margin-bottom: 10px; }
 
   .feedback-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
 
@@ -747,7 +747,7 @@
   });
 
   // ===== 反馈 =====
-  var VERSION = 'v3.8';  // 当前页面版本；归档新版本时同步更新
+  var VERSION = 'v3.9';  // 当前页面版本；归档新版本时同步更新
   var fab = document.getElementById('feedbackFab');
   var overlay = document.getElementById('feedbackOverlay');
   var closeBtn = document.getElementById('feedbackClose');
