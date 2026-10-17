@@ -852,7 +852,7 @@
   });
 
   // ===== 反馈 =====
-  var VERSION = 'v3.11';  // 当前页面版本；归档新版本时同步更新
+  var VERSION = 'v3.12';  // 当前页面版本；归档新版本时同步更新
   var fab = document.getElementById('feedbackFab');
   var overlay = document.getElementById('feedbackOverlay');
   var closeBtn = document.getElementById('feedbackClose');
@@ -1013,6 +1013,11 @@
   // 点击「关于我」面板空白（非邮箱链接）→ 下一个
   panels[1].addEventListener('click', function (e) {
     if (e.target.tagName === 'A') return;
+    nextSlide();
+  });
+  // 点击「数字分身」面板空白（非输入框/按钮/快捷提问）→ 翻回首页
+  panels[2].addEventListener('click', function (e) {
+    if (e.target.closest('input, button, .chip')) return;
     nextSlide();
   });
 
