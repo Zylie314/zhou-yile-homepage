@@ -41,7 +41,7 @@
     padding: 40px 20px 72px;
   }
 
-  /* 顶部导航：三大内容点按切换 */
+  /* 顶部导航：轮播切换 */
   .tabs {
     position: fixed;
     top: 0;
@@ -49,36 +49,73 @@
     right: 0;
     z-index: 40;
     display: flex;
-    justify-content: center;
-    gap: 6px;
-    padding: 12px 16px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 18px;
     background: rgba(255, 253, 247, .78);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--line);
   }
-  .tab {
-    border: 1px solid transparent;
-    background: transparent;
+  .nav-arrow {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--line);
+    background: var(--card-2);
     color: var(--ink-2);
-    font-size: 14px;
-    font-family: inherit;
-    padding: 8px 18px;
-    border-radius: 999px;
+    font-size: 22px;
+    line-height: 1;
+    border-radius: 50%;
     cursor: pointer;
+    font-family: inherit;
     transition: all .15s ease;
-  }
-  .tab:hover { color: var(--ink); }
-  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
-  /* 内容面板：每次只显示一个，占满整页，不叠加 */
-  .panel { display: none; }
-  .panel.active {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+  .nav-arrow:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-center { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .nav-title { font-size: 14px; font-weight: 600; color: var(--ink); }
+  .dots { display: flex; gap: 6px; }
+  .dot-nav {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--line);
+    cursor: pointer;
+    transition: all .25s ease;
+  }
+  .dot-nav.active { background: var(--accent); width: 20px; border-radius: 999px; }
+
+  /* 轮播舞台：3D 透视 */
+  .panel-stage {
+    position: relative;
     min-height: 100vh;
-    padding: 88px 20px 64px;
+    overflow: hidden;
+    perspective: 1400px;
+  }
+  .panel {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 92px 20px 64px;
+    overflow-y: auto;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform-style: preserve-3d;
+    transition: transform .7s cubic-bezier(.4, .1, .2, 1), opacity .55s ease;
+    opacity: 0;
+    pointer-events: none;
+    transform: rotateY(180deg);
+  }
+  .panel.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: rotateY(0deg);
+    z-index: 2;
   }
   .panel-inner { width: 100%; max-width: 880px; }
   .panel-inner .section { margin-top: 0; }
@@ -450,10 +487,20 @@
 </head>
 <body>
   <nav class="tabs" id="tabs">
-    <button class="tab active" data-target="panel-intro" type="button">首页</button>
-    <button class="tab" data-target="panel-about" type="button">关于我</button>
-    <button class="tab" data-target="panel-chat" type="button">数字分身</button>
+    <button class="nav-arrow" id="prevBtn" type="button" aria-label="上一个">‹</button>
+    <div class="nav-center">
+      <span class="nav-title" id="navTitle">首页</span>
+      <div class="dots" id="dots">
+        <span class="dot-nav active"></span>
+        <span class="dot-nav"></span>
+        <span class="dot-nav"></span>
+      </div>
+    </div>
+    <button class="nav-arrow" id="nextBtn" type="button" aria-label="下一个">›</button>
   </nav>
+
+  <!-- 轮播舞台 -->
+  <div class="panel-stage">
 
   <!-- 面板一：介绍 -->
   <div class="panel active" id="panel-intro">
@@ -537,6 +584,7 @@
 
       <p class="footnote">数字分身已接入 DeepSeek 真实模型</p>
     </div>
+  </div>
   </div>
 
   <!-- 反馈入口 -->
@@ -804,7 +852,7 @@
   });
 
   // ===== 反馈 =====
-  var VERSION = 'v3.10';  // 当前页面版本；归档新版本时同步更新
+  var VERSION = 'v3.11';  // 当前页面版本；归档新版本时同步更新
   var fab = document.getElementById('feedbackFab');
   var overlay = document.getElementById('feedbackOverlay');
   var closeBtn = document.getElementById('feedbackClose');
@@ -898,18 +946,74 @@
     if (ft) ft.textContent = '在线版 · AI 对话已启用';
   }
 
-  // ===== 三大内容面板切换 =====
-  var tabsEl = document.getElementById('tabs');
-  var tabBtns = tabsEl.querySelectorAll('.tab');
-  var panels = document.querySelectorAll('.panel');
-  tabBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      tabBtns.forEach(function (b) { b.classList.remove('active'); });
-      panels.forEach(function (p) { p.classList.remove('active'); });
-      btn.classList.add('active');
-      var target = document.getElementById(btn.getAttribute('data-target'));
-      if (target) target.classList.add('active');
+  // ===== 三大内容轮播切换（翻滚动画） =====
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.panel'));
+  var dots = Array.prototype.slice.call(document.querySelectorAll('.dot-nav'));
+  var prevBtn = document.getElementById('prevBtn');
+  var nextBtn = document.getElementById('nextBtn');
+  var navTitle = document.getElementById('navTitle');
+  var titles = ['首页', '关于我', '数字分身'];
+  var current = 0;
+  var animating = false;
+
+  function updateNav() {
+    dots.forEach(function (d, i) { d.classList.toggle('active', i === current); });
+    navTitle.textContent = titles[current];
+  }
+
+  function goTo(target, dir) {
+    if (target === current || animating) return;
+    animating = true;
+    var cur = panels[current];
+    var next = panels[target];
+
+    // 当前面板翻出
+    cur.classList.remove('active');
+    cur.style.transform = dir === 1 ? 'rotateY(-180deg)' : 'rotateY(180deg)';
+    cur.style.opacity = '0';
+    cur.style.zIndex = '1';
+
+    // 目标面板翻入
+    next.style.transform = dir === 1 ? 'rotateY(180deg)' : 'rotateY(-180deg)';
+    next.style.opacity = '1';
+    next.style.zIndex = '3';
+    void next.offsetWidth; // 强制回流，确保过渡生效
+    next.classList.add('active');
+    next.style.transform = 'rotateY(0deg)';
+    next.style.opacity = '1';
+
+    current = target;
+    updateNav();
+
+    setTimeout(function () {
+      cur.style.transform = '';
+      cur.style.opacity = '';
+      cur.style.zIndex = '';
+      next.style.transform = '';
+      next.style.opacity = '';
+      next.style.zIndex = '';
+      animating = false;
+    }, 720);
+  }
+
+  function nextSlide() { goTo((current + 1) % panels.length, 1); }
+  function prevSlide() { goTo((current - 1 + panels.length) % panels.length, -1); }
+
+  nextBtn.addEventListener('click', nextSlide);
+  prevBtn.addEventListener('click', prevSlide);
+  dots.forEach(function (d, i) {
+    d.addEventListener('click', function () {
+      if (i === current) return;
+      goTo(i, i > current ? 1 : -1);
     });
+  });
+
+  // 点击「首页」面板空白 → 下一个
+  panels[0].addEventListener('click', nextSlide);
+  // 点击「关于我」面板空白（非邮箱链接）→ 下一个
+  panels[1].addEventListener('click', function (e) {
+    if (e.target.tagName === 'A') return;
+    nextSlide();
   });
 
   // ===== 初始化 =====
