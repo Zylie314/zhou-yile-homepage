@@ -41,6 +41,48 @@
     padding: 40px 20px 72px;
   }
 
+  /* 顶部导航：三大内容点按切换 */
+  .tabs {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 40;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px 16px;
+    background: rgba(255, 253, 247, .78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .tab {
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-2);
+    font-size: 14px;
+    font-family: inherit;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .tab:hover { color: var(--ink); }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* 内容面板：每次只显示一个，占满整页，不叠加 */
+  .panel { display: none; }
+  .panel.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 88px 20px 64px;
+  }
+  .panel-inner { width: 100%; max-width: 880px; }
+  .panel-inner .section { margin-top: 0; }
+
   /* 顶部 */
   .hero {
     display: flex;
@@ -407,79 +449,94 @@
 </style>
 </head>
 <body>
-  <div class="wrap">
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-target="panel-intro" type="button">首页</button>
+    <button class="tab" data-target="panel-about" type="button">关于我</button>
+    <button class="tab" data-target="panel-chat" type="button">数字分身</button>
+  </nav>
 
-    <!-- 名字 + 一句话介绍 -->
-    <header class="hero">
-      <div class="hero-text">
-        <h1>周亦乐</h1>
-        <p class="tagline">我是一个正在用学习感知智能信息时代的学生</p>
-      </div>
-    </header>
+  <!-- 面板一：介绍 -->
+  <div class="panel active" id="panel-intro">
+    <div class="panel-inner">
+      <header class="hero">
+        <div class="hero-text">
+          <h1>周亦乐</h1>
+          <p class="tagline">我是一个正在用学习感知智能信息时代的学生</p>
+        </div>
+      </header>
+    </div>
+  </div>
 
-    <!-- 个人信息 -->
-    <section class="section">
-      <div class="section-title">关于我</div>
-      <div class="info-card">
-        <div class="info-row">
-          <div class="info-label">身份</div>
-          <div class="info-value">大学生</div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">电子邮箱</div>
-          <div class="info-value"><a href="mailto:2421757972@qq.com">2421757972@qq.com</a></div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">最近在做</div>
-          <div class="info-value">关注 AI 应用 · 内容表达 · 知识整理</div>
-        </div>
-        <div class="info-row">
-          <div class="info-label">擅长 / 关心</div>
-          <div class="info-value">
-            <span class="tag">AI 应用</span>
-            <span class="tag">内容表达</span>
-            <span class="tag">知识整理</span>
+  <!-- 面板二：关于我 -->
+  <div class="panel" id="panel-about">
+    <div class="panel-inner">
+      <section class="section">
+        <div class="section-title">关于我</div>
+        <div class="info-card">
+          <div class="info-row">
+            <div class="info-label">身份</div>
+            <div class="info-value">大学生</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">电子邮箱</div>
+            <div class="info-value"><a href="mailto:2421757972@qq.com">2421757972@qq.com</a></div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">最近在做</div>
+            <div class="info-value">关注 AI 应用 · 内容表达 · 知识整理</div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">擅长 / 关心</div>
+            <div class="info-value">
+              <span class="tag">AI 应用</span>
+              <span class="tag">内容表达</span>
+              <span class="tag">知识整理</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-label">兴趣</div>
+            <div class="info-value">
+              <span class="tag">游戏</span>
+              <span class="tag">音乐</span>
+              <span class="tag">诗词</span>
+            </div>
           </div>
         </div>
-        <div class="info-row">
-          <div class="info-label">兴趣</div>
-          <div class="info-value">
-            <span class="tag">游戏</span>
-            <span class="tag">音乐</span>
-            <span class="tag">诗词</span>
+      </section>
+    </div>
+  </div>
+
+  <!-- 面板三：数字分身聊天区 -->
+  <div class="panel" id="panel-chat">
+    <div class="panel-inner">
+      <section class="section">
+        <div class="section-title">数字分身 · 问我点啥</div>
+        <div class="chat-card">
+          <div class="chat-header">
+            <span class="dot"></span>
+            <span class="name">周亦乐的数字分身</span>
+            <span class="spacer"></span>
+          </div>
+
+          <div class="chat-messages" id="messages">
+            <div class="msg bot">你好，我是周亦乐的数字分身。最近在琢磨 AI 应用、内容表达和知识整理，问点啥？我尽量说得像人话。</div>
+          </div>
+
+          <div class="quick" id="quick">
+            <span class="chip">你最近在关注什么？</span>
+            <span class="chip">你怎么把复杂问题讲清楚？</span>
+            <span class="chip">你的目标是什么？</span>
+          </div>
+
+          <div class="chat-input">
+            <input id="input" type="text" placeholder="输入问题，回车发送…" autocomplete="off" />
+            <button id="send">发送</button>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 数字分身聊天区 -->
-    <section class="section">
-      <div class="section-title">数字分身 · 问我点啥</div>
-      <div class="chat-card">
-        <div class="chat-header">
-          <span class="dot"></span>
-          <span class="name">周亦乐的数字分身</span>
-          <span class="spacer"></span>
-        </div>
-
-        <div class="chat-messages" id="messages">
-          <div class="msg bot">你好，我是周亦乐的数字分身。最近在琢磨 AI 应用、内容表达和知识整理，问点啥？我尽量说得像人话。</div>
-        </div>
-
-        <div class="quick" id="quick">
-          <span class="chip">你最近在关注什么？</span>
-          <span class="chip">你怎么把复杂问题讲清楚？</span>
-          <span class="chip">你的目标是什么？</span>
-        </div>
-
-        <div class="chat-input">
-          <input id="input" type="text" placeholder="输入问题，回车发送…" autocomplete="off" />
-          <button id="send">发送</button>
-        </div>
-      </div>
-    </section>
-
-    <p class="footnote">数字分身已接入 DeepSeek 真实模型</p>
+      <p class="footnote">数字分身已接入 DeepSeek 真实模型</p>
+    </div>
   </div>
 
   <!-- 反馈入口 -->
@@ -747,7 +804,7 @@
   });
 
   // ===== 反馈 =====
-  var VERSION = 'v3.9';  // 当前页面版本；归档新版本时同步更新
+  var VERSION = 'v3.10';  // 当前页面版本；归档新版本时同步更新
   var fab = document.getElementById('feedbackFab');
   var overlay = document.getElementById('feedbackOverlay');
   var closeBtn = document.getElementById('feedbackClose');
@@ -840,6 +897,20 @@
     var ft = document.querySelector('.footnote');
     if (ft) ft.textContent = '在线版 · AI 对话已启用';
   }
+
+  // ===== 三大内容面板切换 =====
+  var tabsEl = document.getElementById('tabs');
+  var tabBtns = tabsEl.querySelectorAll('.tab');
+  var panels = document.querySelectorAll('.panel');
+  tabBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      tabBtns.forEach(function (b) { b.classList.remove('active'); });
+      panels.forEach(function (p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      var target = document.getElementById(btn.getAttribute('data-target'));
+      if (target) target.classList.add('active');
+    });
+  });
 
   // ===== 初始化 =====
 })();
