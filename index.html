@@ -632,10 +632,8 @@
   // 是否静态托管（GitHub Pages 等无 Python 后端环境）
   var IS_STATIC = /github\.io$/.test(location.hostname);
 
-  // ===== 在线版直连 DeepSeek（本地版仍走 /api/chat 后端） =====
-  // 说明：以下 Key 会随页面源码公开，任何访客 F12 都能看到；请给 DeepSeek 账户设置余额上限以控制风险。
-  var DEEPSEEK_KEY = 'sk-b31da7d9305e402892c99b229b866020';
-  var DEEPSEEK_URL = 'https://api.deepseek.com/chat/completions';
+  // ===== 在线版走腾讯云函数代理（Key 藏在云端环境变量，源码不再含 Key；本地版仍走 /api/chat 后端） =====
+  var DEEPSEEK_PROXY_URL = 'https://1480607443-5oiyelrkz5.ap-guangzhou.tencentscf.com';
   var DEEPSEEK_MODEL = 'deepseek-chat';
   var SYSTEM_PROMPT = [
     '你是「周亦乐」的数字分身，请以第一人称扮演周亦乐本人，帮他回答访客的问题。',
@@ -737,20 +735,19 @@
     });
   }
 
-  // 在线版直连 DeepSeek（SSE 流式）；本地版仍用 callLLM 走 /api/chat
+  // 在线版走腾讯云函数代理（非流式）；本地版仍用 callLLM 走 /api/chat
   function callLLMDirect(userText, onDelta, onDone) {
-    return fetch(DEEPSEEK_URL, {
+    return fetch(DEEPSEEK_PROXY_URL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + DEEPSEEK_KEY
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         model: DEEPSEEK_MODEL,
         messages: [{ role: 'system', content: SYSTEM_PROMPT }].concat(buildMsgs(userText).slice(-8)),
         temperature: 0.8,
         max_tokens: 800,
-        stream: true
+        stream: false
       })
     }).then(function (res) {
       if (!res.ok) {
@@ -760,32 +757,14 @@
           throw new Error(msg || ('接口返回 ' + res.status));
         });
       }
-      var reader = res.body.getReader();
-      var decoder = new TextDecoder('utf-8');
-      var buffer = '';
-
-      function pump() {
-        return reader.read().then(function (r) {
-          if (r.done) { onDone(); return; }
-          buffer += decoder.decode(r.value, { stream: true });
-          var lines = buffer.split('\n');
-          buffer = lines.pop();
-          for (var i = 0; i < lines.length; i++) {
-            var s = lines[i].trim();
-            if (s.indexOf('data:') !== 0) continue;
-            var data = s.slice(5).trim();
-            if (data === '[DONE]') continue;
-            try {
-              var obj = JSON.parse(data);
-              var ch = obj.choices && obj.choices[0];
-              var piece = ch && ch.delta && ch.delta.content;
-              if (piece) onDelta(piece);
-            } catch (e) {}
-          }
-          return pump();
-        });
+      return res.json();
+    }).then(function (data) {
+      var content = '';
+      if (data && data.choices && data.choices[0] && data.choices[0].message) {
+        content = data.choices[0].message.content || '';
       }
-      return pump();
+      if (content) onDelta(content);
+      onDone();
     });
   }
 
@@ -852,7 +831,7 @@
   });
 
   // ===== 反馈 =====
-  var VERSION = 'v3.12';  // 当前页面版本；归档新版本时同步更新
+  var VERSION = 'v3.13';  // 当前页面版本；归档新版本时同步更新
   var fab = document.getElementById('feedbackFab');
   var overlay = document.getElementById('feedbackOverlay');
   var closeBtn = document.getElementById('feedbackClose');

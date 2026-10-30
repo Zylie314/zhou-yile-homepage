@@ -15,7 +15,21 @@
 
 ---
 
-## v3.12（当前）
+## v3.13（当前）
+
+**改动：修复 DeepSeek Key 泄露风险——在线版 AI 改走腾讯云函数代理，源码不再含 Key**
+
+- 在线版（GitHub Pages）的 DeepSeek 调用从「前端直连（Key 硬编码在源码）」改为「走腾讯云函数代理」，Key 只存在云函数的环境变量里，页面源码不再新增泄露。
+- 前端移除硬编码的 `DEEPSEEK_KEY` / `DEEPSEEK_URL`，改为请求 `DEEPSEEK_PROXY_URL`（腾讯云函数 URL）。
+- 因国内 API 网关对流式(SSE)支持不稳，在线版改为非流式（`stream:false`）请求，返回完整回复后一次性显示。
+- 本地版（`python server.py` 走 `/api/chat`）保持不变，仍为流式。
+
+> 已归档为独立文件：`outputs/homepage/v3.13.html`（`index.html` 同步指向本版本）。
+> 配套：`tencent-scf-proxy.py`（腾讯云函数代理代码）、`deepseek-proxy-worker.js`（Cloudflare Worker 版，备选）。
+
+---
+
+## v3.12
 
 **改动：第三页（数字分身）点击空白也能翻回第一页，形成完整循环**
 
