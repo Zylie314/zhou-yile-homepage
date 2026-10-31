@@ -520,7 +520,7 @@
   .splash-poem {
     position: relative;
     z-index: 2;
-    writing-mode: vertical-rl;
+    writing-mode: vertical-lr;
     text-orientation: upright;
     color: #f7f3ea;
     text-shadow: 0 1px 10px rgba(0,0,0,.55);
@@ -529,13 +529,13 @@
     font-size: 26px;
     font-weight: 600;
     letter-spacing: .3em;
-    margin-left: 26px;
+    margin-right: 26px;
   }
   .poem-lines {
     font-size: 19px;
     line-height: 1.75;
     letter-spacing: .22em;
-    margin-left: 26px;
+    margin-right: 26px;
   }
   .poem-author {
     font-size: 15px;
@@ -573,8 +573,8 @@
   }
   .splash-skip:hover { background: rgba(0,0,0,.4); border-color: rgba(255,255,255,.7); }
   @media (max-width: 560px) {
-    .poem-title { font-size: 18px; letter-spacing: .22em; margin-left: 14px; }
-    .poem-lines { font-size: 12px; line-height: 1.5; letter-spacing: .16em; margin-left: 14px; }
+    .poem-title { font-size: 18px; letter-spacing: .22em; margin-right: 14px; }
+    .poem-lines { font-size: 12px; line-height: 1.5; letter-spacing: .16em; margin-right: 14px; }
     .poem-author { font-size: 12px; letter-spacing: .2em; }
   }
 </style>
