@@ -526,20 +526,20 @@
     text-shadow: 0 1px 10px rgba(0,0,0,.55);
   }
   .poem-title {
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 600;
-    letter-spacing: .4em;
-    margin-left: 30px;
+    letter-spacing: .3em;
+    margin-left: 26px;
   }
   .poem-lines {
-    font-size: 24px;
-    line-height: 2.1;
-    letter-spacing: .28em;
-    margin-left: 30px;
+    font-size: 19px;
+    line-height: 1.75;
+    letter-spacing: .22em;
+    margin-left: 26px;
   }
   .poem-author {
-    font-size: 16px;
-    letter-spacing: .35em;
+    font-size: 15px;
+    letter-spacing: .3em;
     opacity: .85;
   }
   .splash-hint {
@@ -572,6 +572,11 @@
     transition: all .2s ease;
   }
   .splash-skip:hover { background: rgba(0,0,0,.4); border-color: rgba(255,255,255,.7); }
+  @media (max-width: 560px) {
+    .poem-title { font-size: 18px; letter-spacing: .22em; margin-left: 14px; }
+    .poem-lines { font-size: 12px; line-height: 1.5; letter-spacing: .16em; margin-left: 14px; }
+    .poem-author { font-size: 12px; letter-spacing: .2em; }
+  }
 </style>
 </head>
 <body>
@@ -579,26 +584,19 @@
   <div class="splash" id="splash">
     <div class="splash-slide active" style="background-image:url('splash-bg-1.jpg')">
       <div class="splash-poem">
-        <div class="poem-title">山中</div>
-        <div class="poem-lines">远山如黛雾轻笼<br>亭台半隐水云中<br>一叶扁舟随波去<br>数点归鸿入晚空</div>
+        <div class="poem-title">水调歌头<br>中秋月照十九载</div>
+        <div class="poem-lines">素练穿林叶<br>抬眼见婵娟<br>草木失色<br>映浮生往事勾连<br>迎考复习日里<br>幻想今朝似梦<br>心绪几波澜<br>尘世不堪扰<br>终是又一年<br><br>心向月<br>身陷地<br>亦可攀<br>生辰吉乐<br>持剑破浪定扬帆<br>朝露如光似电<br>晚风轻拂我面<br>满月照人间<br>游子静观月<br>生命尚年年</div>
         <div class="poem-author">周亦乐</div>
       </div>
     </div>
     <div class="splash-slide" style="background-image:url('splash-bg-2.jpg')">
       <div class="splash-poem">
-        <div class="poem-title">秋夜</div>
-        <div class="poem-lines">月色如霜落小楼<br>西风一夜入深秋<br>灯前独坐听更漏<br>半卷诗书半白头</div>
+        <div class="poem-title">菩萨蛮<br>不第后夜路所思</div>
+        <div class="poem-lines">夜同霜宿行人眠<br>寒蝉凄切三辄变<br>星隐暮朝中<br>凤难居我桐<br>何知浮尘死<br>远在青天外<br>千绪半为哀<br>残花难赋词</div>
         <div class="poem-author">周亦乐</div>
       </div>
     </div>
-    <div class="splash-slide" style="background-image:url('splash-bg-3.jpg')">
-      <div class="splash-poem">
-        <div class="poem-title">江畔</div>
-        <div class="poem-lines">江天寥廓雁南飞<br>烟水苍茫客未归<br>独立桥头人望远<br>芦花如雪湿人衣</div>
-        <div class="poem-author">周亦乐</div>
-      </div>
-    </div>
-    <div class="splash-hint" id="splashHint">点击切换 · 1 / 3</div>
+    <div class="splash-hint" id="splashHint">点击切换 · 1 / 2</div>
     <button class="splash-skip" id="splashSkip" type="button">跳过 ›</button>
   </div>
 
